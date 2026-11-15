@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom'
 import type { ReactNode } from 'react'
+import { useLang } from '../lib/i18n'
 
 export function PageTitle({ kicker, title, children, back }: { kicker?: string; title: string; children?: ReactNode; back?: string }) {
+  const { t } = useLang()
   return (
     <header className="mb-6">
-      {back && <Link to={back} className="mb-3 inline-block text-sm text-ink-400 hover:text-gold-300">← Zurück</Link>}
+      {back && <Link to={back} className="mb-3 inline-block text-sm text-ink-400 hover:text-gold-300">← {t('Zurück', 'Back')}</Link>}
       {kicker && <div className="text-xs uppercase tracking-[0.25em] text-gold-500">{kicker}</div>}
       <h1 className="text-3xl sm:text-4xl">{title}</h1>
       {children && <p className="mt-2 max-w-2xl text-ink-400">{children}</p>}
@@ -14,11 +16,12 @@ export function PageTitle({ kicker, title, children, back }: { kicker?: string; 
 }
 
 export function Disclaimer({ compact }: { compact?: boolean }) {
+  const { t } = useLang()
   return (
     <div className={`rounded-xl border border-gold-600/30 bg-gold-500/5 ${compact ? 'p-3 text-xs' : 'p-4 text-sm'} text-ink-200`}>
-      <span className="font-medium text-gold-300">Ehrlicher Hinweis: </span>
-      Das ist kein Lügendetektor. Kein Signal beweist etwas. Einschätzungen sind Wahrscheinlichkeiten –
-      Baseline zuerst, mehrere Signale zusammen, Kontext beachten.
+      <span className="font-medium text-gold-300">{t('Ehrlicher Hinweis: ', 'Honest note: ')}</span>
+      {t('Das ist kein Lügendetektor. Kein Signal beweist etwas. Einschätzungen sind Wahrscheinlichkeiten – Baseline zuerst, mehrere Signale zusammen, Kontext beachten.',
+        'This is not a lie detector. No single signal proves anything. Reads are probabilities – baseline first, several signals together, mind the context.')}
     </div>
   )
 }

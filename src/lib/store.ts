@@ -99,5 +99,8 @@ export function levelInfo(xp = 0) {
   return { lvl, progress: rest / need, rest, need }
 }
 
-export const LEVEL_TITLES = ['Neuling', 'Beobachter', 'Spurenleser', 'Analytiker', 'Menschenkenner', 'Mentalist', 'Meister']
-export const levelTitle = (lvl: number) => LEVEL_TITLES[Math.min(lvl - 1, LEVEL_TITLES.length - 1)]
+export const LEVEL_TITLES = {
+  de: ['Neuling', 'Beobachter', 'Spurenleser', 'Analytiker', 'Menschenkenner', 'Mentalist', 'Meister'],
+  en: ['Novice', 'Observer', 'Tracker', 'Analyst', 'People Reader', 'Mentalist', 'Master'],
+}
+export const levelTitle = (lvl: number, lang: 'de' | 'en' = 'de') => LEVEL_TITLES[lang][Math.min(lvl - 1, LEVEL_TITLES[lang].length - 1)]

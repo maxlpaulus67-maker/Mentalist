@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { useLang } from '../../lib/i18n'
 
 /**
  * Parametrisches Gesicht. Jeder Wert steuert eine Muskelgruppe
@@ -60,6 +61,7 @@ interface Props {
 
 export default function Face({ p, persona = PERSONAS[0], className, highlight = [] }: Props) {
   const uid = useId().replace(/:/g, '')
+  const { t } = useLang()
   const W = persona.width
   const cx = 100
 
@@ -120,7 +122,7 @@ export default function Face({ p, persona = PERSONAS[0], className, highlight = 
   const hl = (k: string) => highlight.includes(k as never)
 
   return (
-    <svg viewBox="0 0 200 250" className={className} role="img" aria-label="Gezeichnetes Gesicht">
+    <svg viewBox="0 0 200 250" className={className} role="img" aria-label={t('Gezeichnetes Gesicht', 'Drawn face')}>
       <defs>
         <radialGradient id={`sk${uid}`} cx="50%" cy="42%" r="62%">
           <stop offset="0%" stopColor={persona.skin} />

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Face, { NEUTRAL, PERSONAS, type Persona } from './Face'
-import { BLITZ_ITEMS, EMOTIONS, INTENSITY, emotionById, faceFor, type EmotionId, type Intensity } from './data'
+import { BLITZ_ITEMS, EMOTIONS, INTENSITY, INTENSITY_NAME, emotionById, faceFor, type EmotionId, type Intensity } from './data'
 import { record, setSetting, useStore } from '../../lib/store'
 import { pick, shuffle } from '../../lib/util'
 import { ProgressBar } from '../../components/ui'
+import { useLang } from '../../lib/i18n'
 
 const DURATIONS = [500, 300, 200, 120, 80, 40]
 type Phase = 'setup' | 'fix' | 'pre' | 'flash' | 'post' | 'answer' | 'feedback' | 'summary'
@@ -12,6 +13,7 @@ interface Result { r: Round; chosen: EmotionId; ms: number }
 
 export default function BlitzTraining({ daily, onDone }: { daily?: boolean; onDone?: () => void }) {
   const { settings } = useStore()
+  const { t } = useLang()
   const duration = (settings['mimik.duration'] as number) ?? 500
   const level = (settings['mimik.intensity'] as Intensity | 'alle') ?? 'alle'
   const mask = (settings['mimik.mask'] as boolean) ?? true
@@ -78,36 +80,36 @@ export default function BlitzTraining({ daily, onDone }: { daily?: boolean; onDo
     return (
       <div className="card space-y-5">
         <div>
-          <div className="mb-2 text-sm text-ink-400">Anzeigedauer</div>
+          <div className="mb-2 text-sm text-ink-400">{t('Anzeigedauer', 'Display time')}</div>
           <div className="flex flex-wrap gap-2">
             {DURATIONS.map((d) => (
               <button key={d} onClick={() => setSetting('mimik.duration', d)} className={`rounded-lg border px-3 py-2 text-sm ${duration === d ? 'border-gold-500 bg-gold-500/15 text-gold-300' : 'border-ink-600 text-ink-400'}`}>{d} ms</button>
             ))}
           </div>
-          <input type="range" min={40} max={500} step={10} value={duration} onChange={(e) => setSetting('mimik.duration', Number(e.target.value))} className="mt-3 w-full accent-[#c9a24a]" aria-label="Anzeigedauer in Millisekunden" />
+          <input type="range" min={40} max={500} step={10} value={duration} onChange={(e) => setSetting('mimik.duration', Number(e.target.value))} className="mt-3 w-full accent-[#c9a24a]" aria-label={t('Anzeigedauer in Millisekunden', 'Display time in milliseconds')} />
           <div className="text-right text-xs text-ink-400">{duration} ms</div>
         </div>
         <div>
-          <div className="mb-2 text-sm text-ink-400">Intensität der Ausdrücke</div>
+          <div className="mb-2 text-sm text-ink-400">{t('Intensität der Ausdrücke', 'Expression intensity')}</div>
           <div className="flex flex-wrap gap-2">
             {(['alle', 'stark', 'mittel', 'subtil'] as const).map((l) => (
-              <button key={l} onClick={() => setSetting('mimik.intensity', l)} className={`rounded-lg border px-3 py-2 text-sm capitalize ${level === l ? 'border-gold-500 bg-gold-500/15 text-gold-300' : 'border-ink-600 text-ink-400'}`}>{l}</button>
+              <button key={l} onClick={() => setSetting('mimik.intensity', l)} className={`rounded-lg border px-3 py-2 text-sm capitalize ${level === l ? 'border-gold-500 bg-gold-500/15 text-gold-300' : 'border-ink-600 text-ink-400'}`}>{t(INTENSITY_NAME[l])}</button>
             ))}
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-6">
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={mask} onChange={(e) => setSetting('mimik.mask', e.target.checked)} className="h-4 w-4 accent-[#c9a24a]" />
-            Maskierung (neutrales Gesicht davor & danach)
+            {t('Maskierung (neutrales Gesicht davor & danach)', 'Masking (neutral face before & after)')}
           </label>
           <label className="flex items-center gap-2 text-sm">
-            Runden
+            {t('Runden', 'Rounds')}
             <select value={rounds} onChange={(e) => setSetting('mimik.rounds', Number(e.target.value))} className="rounded-lg border border-ink-600 bg-ink-900 px-2 py-1">
               {[7, 14, 21, 28].map((n) => <option key={n}>{n}</option>)}
             </select>
           </label>
         </div>
-        <button className="btn-gold w-full" onClick={restart}>Training starten</button>
+        <button className="btn-gold w-full" onClick={restart}>{t('Training starten', 'Start training')}</button>
       </div>
     )
   }
@@ -122,18 +124,18 @@ export default function BlitzTraining({ daily, onDone }: { daily?: boolean; onDo
       return { e, n: rs.length, ok: rs.filter((r) => r.chosen === e.id).length }
     }).filter((x) => x.n)
     const tip = rate >= 0.85 && duration > 40
-      ? `Stark! Versuch als Nächstes ${DURATIONS.find((d) => d < duration) ?? 40} ms oder subtilere Ausdrücke.`
-      : rate < 0.55 ? 'Geh eine Stufe langsamer und lies die Lektion zu den Verwechslungen.' : 'Bleib bei dieser Geschwindigkeit, bis du über 85 % liegst.'
+      ? t(`Stark! Versuch als Nächstes ${DURATIONS.find((d) => d < duration) ?? 40} ms oder subtilere Ausdrücke.`, `Great! Next, try ${DURATIONS.find((d) => d < duration) ?? 40} ms or subtler expressions.`)
+      : rate < 0.55 ? t('Geh eine Stufe langsamer und lies die Lektion zu den Verwechslungen.', 'Go one step slower and read the lesson on common mix-ups.') : t('Bleib bei dieser Geschwindigkeit, bis du über 85 % liegst.', 'Stay at this speed until you score above 85 %.')
     return (
       <div className="card space-y-5">
         <div className="grid grid-cols-2 gap-3 text-center">
-          <div className="rounded-xl bg-ink-900/70 p-4"><div className="font-serif text-4xl text-gold-300">{Math.round(rate * 100)} %</div><div className="text-xs text-ink-400">Trefferquote</div></div>
-          <div className="rounded-xl bg-ink-900/70 p-4"><div className="font-serif text-4xl text-gold-300">{avg} ms</div><div className="text-xs text-ink-400">Ø Reaktionszeit</div></div>
+          <div className="rounded-xl bg-ink-900/70 p-4"><div className="font-serif text-4xl text-gold-300">{Math.round(rate * 100)} %</div><div className="text-xs text-ink-400">{t('Trefferquote', 'Hit rate')}</div></div>
+          <div className="rounded-xl bg-ink-900/70 p-4"><div className="font-serif text-4xl text-gold-300">{avg} ms</div><div className="text-xs text-ink-400">{t('Ø Reaktionszeit', 'Avg. reaction time')}</div></div>
         </div>
         <div className="space-y-2">
           {per.map(({ e, n, ok }) => (
             <div key={e.id} className="flex items-center gap-3 text-sm">
-              <span className="w-28">{e.name}</span>
+              <span className="w-28">{t(e.name)}</span>
               <ProgressBar value={ok / n} />
               <span className="w-12 text-right text-ink-400">{ok}/{n}</span>
             </div>
@@ -141,9 +143,9 @@ export default function BlitzTraining({ daily, onDone }: { daily?: boolean; onDo
         </div>
         <p className="text-sm text-ink-400">{tip}</p>
         <div className="flex flex-wrap gap-2">
-          {daily ? <button className="btn-gold" onClick={onDone}>Weiter</button> : <>
-            <button className="btn-gold" onClick={restart}>Nochmal</button>
-            <button className="btn-ghost" onClick={() => setPhase('setup')}>Einstellungen</button>
+          {daily ? <button className="btn-gold" onClick={onDone}>{t('Weiter', 'Next')}</button> : <>
+            <button className="btn-gold" onClick={restart}>{t('Nochmal', 'Again')}</button>
+            <button className="btn-ghost" onClick={() => setPhase('setup')}>{t('Einstellungen', 'Settings')}</button>
           </>}
         </div>
       </div>
@@ -161,8 +163,8 @@ export default function BlitzTraining({ daily, onDone }: { daily?: boolean; onDo
     <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start">
       <div className="card">
         <div className="mb-2 flex items-center justify-between text-xs text-ink-400">
-          <span>Runde {idx + 1} / {plan.length}</span>
-          <span>{duration} ms · {mask ? 'maskiert' : 'ohne Maske'}</span>
+          <span>{t('Runde', 'Round')} {idx + 1} / {plan.length}</span>
+          <span>{duration} ms · {mask ? t('maskiert', 'masked') : t('ohne Maske', 'unmasked')}</span>
         </div>
         <ProgressBar value={idx / plan.length} className="mb-3" />
         <div className="relative mx-auto aspect-[4/5] w-full max-w-xs overflow-hidden rounded-xl bg-ink-950">
@@ -174,7 +176,7 @@ export default function BlitzTraining({ daily, onDone }: { daily?: boolean; onDo
             <Face p={faceFor(cur.emotion, INTENSITY[cur.intensity], cur.mirror)} persona={cur.persona} className="h-full w-full" highlight={phase === 'feedback' ? emo.regions : []} />
           </div>
           {phase === 'fix' && <div className="absolute inset-0 grid place-items-center font-serif text-4xl text-gold-500">+</div>}
-          {phase === 'answer' && <div className="absolute inset-0 grid place-items-center text-sm text-ink-400">Welche Emotion?</div>}
+          {phase === 'answer' && <div className="absolute inset-0 grid place-items-center text-sm text-ink-400">{t('Welche Emotion?', 'Which emotion?')}</div>}
         </div>
       </div>
 
@@ -187,7 +189,7 @@ export default function BlitzTraining({ daily, onDone }: { daily?: boolean; onDo
                 : e.id === last?.chosen ? 'border-rose-500 bg-rose-500/10 text-rose-300' : 'border-ink-700 opacity-40'
             return (
               <button key={e.id} disabled={phase !== 'answer' && !fb} onClick={() => choose(e.id)}
-                className={`rounded-xl border px-3 py-3 text-sm transition ${cls}`}>{e.name}</button>
+                className={`rounded-xl border px-3 py-3 text-sm transition ${cls}`}>{t(e.name)}</button>
             )
           })}
         </div>
@@ -196,21 +198,21 @@ export default function BlitzTraining({ daily, onDone }: { daily?: boolean; onDo
           <div className="card space-y-3 text-sm">
             <div className="flex items-baseline justify-between">
               <span className={wrongEmo ? 'text-rose-400' : 'text-emerald-400'}>
-                {wrongEmo ? `Es war ${emo.name}.` : `Richtig – ${emo.name}.`}
+                {wrongEmo ? t(`Es war ${emo.name.de}.`, `It was ${emo.name.en}.`) : t(`Richtig – ${emo.name.de}.`, `Correct – ${emo.name.en}.`)}
               </span>
-              <span className="text-xs text-ink-400">{last.ms} ms · {cur.intensity}</span>
+              <span className="text-xs text-ink-400">{last.ms} ms · {t(INTENSITY_NAME[cur.intensity])}</span>
             </div>
             <div>
-              <div className="mb-1 text-xs uppercase tracking-widest text-gold-500">Woran du es erkennst</div>
-              <ul className="list-disc space-y-1 pl-5 text-ink-200">{emo.cues.slice(0, 3).map((c) => <li key={c}>{c}</li>)}</ul>
+              <div className="mb-1 text-xs uppercase tracking-widest text-gold-500">{t('Woran du es erkennst', 'How to spot it')}</div>
+              <ul className="list-disc space-y-1 pl-5 text-ink-200">{emo.cues.slice(0, 3).map((c) => <li key={c.de}>{t(c)}</li>)}</ul>
             </div>
             {wrongEmo && (
               <div className="rounded-lg bg-ink-900/70 p-3">
-                <div className="mb-1 text-xs uppercase tracking-widest text-gold-500">{emo.name} vs. {wrongEmo.name}</div>
-                <p className="text-ink-200">{emo.vs[wrongEmo.id] ?? wrongEmo.vs[emo.id] ?? `${wrongEmo.name}: ${wrongEmo.cues[0]}`}</p>
+                <div className="mb-1 text-xs uppercase tracking-widest text-gold-500">{t(emo.name)} vs. {t(wrongEmo.name)}</div>
+                <p className="text-ink-200">{t(emo.vs[wrongEmo.id] ?? wrongEmo.vs[emo.id] ?? { de: `${wrongEmo.name.de}: ${wrongEmo.cues[0].de}`, en: `${wrongEmo.name.en}: ${wrongEmo.cues[0].en}` })}</p>
               </div>
             )}
-            <button className="btn-gold w-full" onClick={next} autoFocus>{idx + 1 >= plan.length ? 'Auswertung' : 'Nächstes Gesicht'}</button>
+            <button className="btn-gold w-full" onClick={next} autoFocus>{idx + 1 >= plan.length ? t('Auswertung', 'Results') : t('Nächstes Gesicht', 'Next face')}</button>
           </div>
         )}
       </div>

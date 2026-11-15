@@ -1,25 +1,20 @@
+import type { T } from './i18n'
+
 export type AreaId =
   | 'mimik' | 'koerper' | 'beobachtung' | 'schluss'
   | 'cold' | 'poker' | 'palast' | 'notizen'
 
-export interface AreaMeta {
-  id: AreaId
-  nr: number
-  title: string
-  subtitle: string
-  icon: string
-  ready: boolean
-}
+export interface AreaMeta { id: AreaId; nr: number; title: T; subtitle: T; icon: string; ready: boolean }
 
 export const AREAS: AreaMeta[] = [
-  { id: 'mimik', nr: 1, title: 'Mimik', subtitle: 'Die 7 Basisemotionen & Blitz-Training', icon: '◉', ready: true },
-  { id: 'koerper', nr: 2, title: 'Körpersprache', subtitle: 'Haltung, Hände, Füße, Distanz, Stimme', icon: '⟟', ready: false },
-  { id: 'beobachtung', nr: 3, title: 'Beobachtung', subtitle: 'Szenen einprägen, Details abrufen', icon: '◎', ready: false },
-  { id: 'schluss', nr: 4, title: 'Schlussfolgern', subtitle: 'Kleine Fälle im Detektiv-Stil', icon: '⌕', ready: false },
-  { id: 'cold', nr: 5, title: 'Cold Reading', subtitle: 'Barnum-Aussagen durchschauen', icon: '✶', ready: false },
-  { id: 'poker', nr: 6, title: 'Poker', subtitle: 'Pot Odds, Positionen, Tells', icon: '♠', ready: false },
-  { id: 'palast', nr: 7, title: 'Gedächtnispalast', subtitle: 'Wörter, Zahlen, Karten merken', icon: '⌂', ready: false },
-  { id: 'notizen', nr: 8, title: 'Feldnotizen', subtitle: 'Einschätzungen im echten Leben prüfen', icon: '✎', ready: false },
+  { id: 'mimik', nr: 1, title: { de: 'Mimik', en: 'Facial Expressions' }, subtitle: { de: 'Die 7 Basisemotionen & Blitz-Training', en: 'The 7 basic emotions & flash training' }, icon: '◉', ready: true },
+  { id: 'koerper', nr: 2, title: { de: 'Körpersprache', en: 'Body Language' }, subtitle: { de: 'Haltung, Hände, Füße, Distanz, Stimme', en: 'Posture, hands, feet, distance, voice' }, icon: '⟟', ready: false },
+  { id: 'beobachtung', nr: 3, title: { de: 'Beobachtung', en: 'Observation' }, subtitle: { de: 'Szenen einprägen, Details abrufen', en: 'Memorise scenes, recall details' }, icon: '◎', ready: false },
+  { id: 'schluss', nr: 4, title: { de: 'Schlussfolgern', en: 'Deduction' }, subtitle: { de: 'Kleine Fälle im Detektiv-Stil', en: 'Small detective-style cases' }, icon: '⌕', ready: false },
+  { id: 'cold', nr: 5, title: { de: 'Cold Reading', en: 'Cold Reading' }, subtitle: { de: 'Barnum-Aussagen durchschauen', en: 'See through Barnum statements' }, icon: '✶', ready: false },
+  { id: 'poker', nr: 6, title: { de: 'Poker', en: 'Poker' }, subtitle: { de: 'Pot Odds, Positionen, Tells', en: 'Pot odds, positions, tells' }, icon: '♠', ready: false },
+  { id: 'palast', nr: 7, title: { de: 'Gedächtnispalast', en: 'Memory Palace' }, subtitle: { de: 'Wörter, Zahlen, Karten merken', en: 'Remember words, numbers, cards' }, icon: '⌂', ready: false },
+  { id: 'notizen', nr: 8, title: { de: 'Feldnotizen', en: 'Field Notes' }, subtitle: { de: 'Einschätzungen im echten Leben prüfen', en: 'Check real-life reads' }, icon: '✎', ready: false },
 ]
 
 export const areaById = (id: string) => AREAS.find((a) => a.id === id)

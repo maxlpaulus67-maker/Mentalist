@@ -5,16 +5,18 @@ import { setSetting, today } from '../lib/store'
 import BlitzTraining from '../areas/mimik/BlitzTraining'
 import QuizRunner from '../components/QuizRunner'
 import { QUIZ as MIMIK_QUIZ } from '../areas/mimik/data'
+import { useLang, type T } from '../lib/i18n'
 
-interface Step { title: string; area: string; render: (done: () => void) => ReactNode }
+interface Step { title: T; area: T; render: (done: () => void) => ReactNode }
 
 /** Bausteine des täglichen Trainings – jeder neue Bereich hängt sich hier an. */
 const STEPS: Step[] = [
-  { title: 'Mikroexpressionen', area: 'Mimik', render: (d) => <BlitzTraining daily onDone={d} /> },
-  { title: 'Merkmale wiederholen', area: 'Mimik', render: (d) => <QuizRunner area="mimik" ex="quiz" questions={MIMIK_QUIZ} count={5} onDone={() => setTimeout(d, 0)} /> },
+  { title: { de: 'Mikroexpressionen', en: 'Micro-expressions' }, area: { de: 'Mimik', en: 'Facial Expressions' }, render: (d) => <BlitzTraining daily onDone={d} /> },
+  { title: { de: 'Merkmale wiederholen', en: 'Review features' }, area: { de: 'Mimik', en: 'Facial Expressions' }, render: (d) => <QuizRunner area="mimik" ex="quiz" questions={MIMIK_QUIZ} count={5} onDone={() => setTimeout(d, 0)} /> },
 ]
 
 export default function Daily() {
+  const { t } = useLang()
   const [i, setI] = useState(0)
   const done = i >= STEPS.length
   const advance = () => {
@@ -23,12 +25,12 @@ export default function Daily() {
   }
   return (
     <div className="max-w-3xl">
-      <PageTitle kicker="Tägliches Training" title={done ? 'Geschafft' : STEPS[i].title} back="/">
-        {done ? 'Deine Streak ist gesichert. Morgen geht es weiter.' : `Schritt ${i + 1} von ${STEPS.length} · ${STEPS[i].area}`}
+      <PageTitle kicker={t('Tägliches Training', 'Daily training')} title={done ? t('Geschafft', 'Done') : t(STEPS[i].title)} back="/">
+        {done ? t('Deine Streak ist gesichert. Morgen geht es weiter.', 'Your streak is safe. See you tomorrow.') : `${t('Schritt', 'Step')} ${i + 1} / ${STEPS.length} · ${t(STEPS[i].area)}`}
       </PageTitle>
       <ProgressBar value={i / STEPS.length} className="mb-6" />
       {done ? (
-        <div className="flex gap-2"><Link to="/" className="btn-gold">Zur Startseite</Link><Link to="/statistik" className="btn-ghost">Statistik ansehen</Link></div>
+        <div className="flex gap-2"><Link to="/" className="btn-gold">{t('Zur Startseite', 'Back home')}</Link><Link to="/statistik" className="btn-ghost">{t('Statistik ansehen', 'View stats')}</Link></div>
       ) : <div key={i}>{STEPS[i].render(advance)}</div>}
     </div>
   )

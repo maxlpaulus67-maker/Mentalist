@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: 'Mentalist Lab',
         short_name: 'Mentalist Lab',
-        description: 'Beobachten, Menschen lesen, schlussfolgern – Training für Mentalisten.',
+        description: 'Beobachten, Menschen lesen, schlussfolgern – Training für Mentalisten. / Observe, read people, deduce.',
         lang: 'de',
         theme_color: '#141416',
         background_color: '#141416',
