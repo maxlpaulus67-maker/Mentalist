@@ -126,7 +126,7 @@ function Sorter({ count = 12, onDone }: { count?: number; onDone?: () => void })
     <div className="card max-w-2xl">
       <div className="mb-3 flex justify-between text-xs text-ink-400"><span>{i + 1} / {set.length}</span><span>{score} {t('richtig', 'correct')}</span></div>
       <ProgressBar value={i / set.length} className="mb-5" />
-      <blockquote className="mb-5 border-l-2 border-gold-500 pl-4 font-serif text-2xl leading-snug text-ink-200">„{t(cur.s)}“</blockquote>
+      <blockquote className="mb-5 border-l-2 border-gold-500 pl-4 font-serif text-2xl leading-snug text-ink-200">{t(`„${cur.s.de}“`, `“${cur.s.en}”`)}</blockquote>
       <div className="grid grid-cols-2 gap-2">
         {btn('b', t('Passt auf fast jeden', 'Fits almost anyone'))}
         {btn('s', t('Wirklich spezifisch', 'Truly specific'))}
