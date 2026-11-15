@@ -11,17 +11,17 @@ npm run build    # Produktions-Build inkl. Service Worker (dist/)
 
 ## Plan
 
-| # | Bereich | Status |
+| # | Bereich | Inhalt |
 |---|---------|--------|
-| – | Grundstruktur, Navigation, Startseite, Streak, Level, Statistik, Hinweis, Tägliches Training | ✅ |
-| 1 | Mimik – 12 Lektionen, Blitz-Training (21 Aufgaben, 500–40 ms), Merkmals-Quiz (22 Fragen), Gesichts-Labor | ✅ |
-| 2 | Körpersprache – Lektionen + Quiz | offen |
-| 3 | Beobachtung – SVG-Szenen + Detailfragen | offen |
-| 4 | Schlussfolgern – Detektiv-Fälle | offen |
-| 5 | Cold Reading – Barnum-Sortierübung | offen |
-| 6 | Poker – Pot Odds, Positionen, Starthände, Tells (nur Spielgeld) | offen |
-| 7 | Gedächtnispalast – Wörter, Zahlen, Karten | offen |
-| 8 | Feldnotizen – Tagebuch mit Trefferquote | offen |
+| – | Grundstruktur | Navigation, Start, Streak, Level, Statistik, Hinweis, Tägliches Training, DE/EN |
+| 1 | Mimik | 12 Lektionen, Blitz-Training (21 Aufgaben, 500–40 ms), Merkmals-Quiz (22), Gesichts-Labor |
+| 2 | Körpersprache | 6 Lektionen, Wissens-Quiz (24), Situationen (10) |
+| 3 | Beobachtung | 3 Lektionen, zufällige SVG-Szenen, 20+ Fragetypen, 5 Stufen (30–10 s) |
+| 4 | Schlussfolgern | 3 Lektionen, 20 Fälle mit Auflösung |
+| 5 | Cold Reading | 3 Lektionen, Sortierübung (30 Aussagen), Techniken-Quiz (10) |
+| 6 | Poker | 6 Lektionen, Pot-Odds-Rechner, Call/Fold-Drill (∞), Positionen & Starthände (12), Tells (10) – nur Spielgeld |
+| 7 | Gedächtnispalast | 4 Lektionen, Wortlisten (60 Wörter), Zahlen, Kartenreihenfolge |
+| 8 | Feldnotizen | 3 Lektionen, Tagebuch, Trefferquote & Kalibrierung, 24 Missionen |
 
 ## Struktur
 
@@ -29,4 +29,5 @@ npm run build    # Produktions-Build inkl. Service Worker (dist/)
 - `src/components/` – Layout/Navigation, UI-Bausteine, wiederverwendbares Quiz, Linienchart
 - `src/pages/` – Start, Bereiche, Statistik, Hinweis, Tägliches Training
 - `src/areas/<bereich>/` – Inhalte und Übungen je Bereich
-- Neue Bereiche: in `pages/AreaPage.tsx` (`IMPL`) und `pages/Daily.tsx` (`STEPS`) eintragen.
+- `src/components/AreaShell.tsx` – gemeinsamer Rahmen für Lektionen/Übungen
+- Texte zweisprachig als `{ de, en }`, Übersetzung über `useLang()` in `src/lib/i18n.ts`

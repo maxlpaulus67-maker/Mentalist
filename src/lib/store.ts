@@ -10,6 +10,18 @@ export interface Attempt {
   d?: string // Detail, z. B. Emotion
 }
 
+export interface Note {
+  id: string
+  t: number
+  situation: string
+  guess: string
+  confidence: number // 50–100 %
+  category: string
+  outcome: 'ja' | 'teils' | 'nein' | null
+  resolvedAt?: number
+  comment?: string
+}
+
 export interface State {
   v: 1
   attempts: Attempt[]
@@ -17,13 +29,14 @@ export interface State {
   streak: { count: number; last: string | null }
   lessonsRead: string[]
   settings: Record<string, number | string | boolean>
+  notes: Note[]
 }
 
 const KEY = 'mentalist-lab:v1'
 const MAX_ATTEMPTS = 6000
 
 const fresh = (): State => ({
-  v: 1, attempts: [], xp: {}, streak: { count: 0, last: null }, lessonsRead: [], settings: {},
+  v: 1, attempts: [], xp: {}, streak: { count: 0, last: null }, lessonsRead: [], settings: {}, notes: [],
 })
 
 function load(): State {
@@ -88,6 +101,22 @@ export function markLessonRead(id: string, area: AreaId) {
 
 export function setSetting(k: string, v: number | string | boolean) {
   commit({ ...state, settings: { ...state.settings, [k]: v } })
+}
+
+export function addNote(n: Omit<Note, 'id' | 't' | 'outcome'>) {
+  const note: Note = { ...n, id: Math.random().toString(36).slice(2, 10), t: Date.now(), outcome: null }
+  commit({ ...state, notes: [note, ...state.notes], xp: { ...state.xp, notizen: (state.xp.notizen ?? 0) + 5 }, streak: bumpStreak(state) })
+}
+
+export function resolveNote(id: string, outcome: Note['outcome'], comment?: string) {
+  const notes = state.notes.map((n) => (n.id === id ? { ...n, outcome, comment, resolvedAt: outcome ? Date.now() : undefined } : n))
+  const before = state.notes.find((n) => n.id === id)
+  commit({ ...state, notes })
+  if (outcome && !before?.outcome) record({ area: 'notizen', ex: 'notiz', ok: outcome === 'ja', d: outcome }, outcome === 'ja' ? 12 : 6)
+}
+
+export function deleteNote(id: string) {
+  commit({ ...state, notes: state.notes.filter((n) => n.id !== id) })
 }
 
 export function resetAll() { commit(fresh()) }

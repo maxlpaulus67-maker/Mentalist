@@ -51,7 +51,7 @@ export default function QuizRunner({ area, ex, questions, count, onDone }: {
         <span>{t('Frage', 'Question')} {i + 1} / {set.length}</span><span>{score} {t('richtig', 'correct')}</span>
       </div>
       <ProgressBar value={i / set.length} className="mb-4" />
-      <p className="mb-4 text-lg text-ink-200">{t(cur.q)}</p>
+      <p className="mb-4 whitespace-pre-line text-lg text-ink-200">{t(cur.q)}</p>
       <div className="grid gap-2">
         {cur.options.map((o, k) => {
           const state = chosen === null ? '' : k === cur.answer ? 'border-emerald-500/70 bg-emerald-500/10' : k === chosen ? 'border-rose-500/70 bg-rose-500/10' : 'opacity-50'
